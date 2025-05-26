@@ -1,0 +1,393 @@
+:root {
+    --primary-color: #1a73e8;
+    --completed-color: #34a853;
+    --error-color: #ea4335;
+    --background-color: #ffffff;
+    --surface-color: #ffffff;
+    --text-primary: #202124;
+    --text-secondary: #5f6368;
+    --border-color: #dadce0;
+    --hover-color: #f1f3f4;
+    --gradient-start: #4285f4;
+    --gradient-end: #34a853;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Google Sans', Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    gap: 0;
+}
+
+/* 左侧甘特图区域 */
+.gantt-section {
+    flex: 1;
+    min-width: 200px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+}
+
+.gantt-section h2 {
+    color: var(--text-secondary);
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    padding-left: 8px;
+    flex-shrink: 0;
+}
+
+#gantt-chart-container {
+    flex: 1;
+    position: relative;
+    background-color: var(--background-color);
+    padding: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#gantt-chart {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+}
+
+/* 右侧任务列表区域 */
+.task-section {
+    flex: 1;
+    min-width: 200px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+}
+
+h1 {
+    background: linear-gradient(135deg, #6B8AFB, #E469B3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    padding: 8px 0;
+}
+
+.task-controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+#new-task {
+    flex: 1;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: transparent;
+    transition: all 0.2s ease;
+}
+
+#new-task:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.task-filter {
+    padding: 0 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: transparent;
+    color: var(--text-primary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.task-filter:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+#task-list {
+    list-style: none;
+}
+
+#task-list li {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    background-color: transparent;
+}
+
+#task-list li:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#task-list li.completed {
+    background-color: var(--hover-color);
+}
+
+#task-list li.completed .task-text {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+}
+
+.task-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0 12px;
+}
+
+.task-text {
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.task-text:hover {
+    background-color: var(--hover-color);
+}
+
+.date-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--hover-color);
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin-top: 4px;
+}
+
+.date-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.date-group label {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.date-picker {
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text-primary);
+    background-color: transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    min-width: 140px;
+}
+
+.date-picker:hover {
+    border-color: var(--border-color);
+    background-color: var(--surface-color);
+}
+
+.date-picker:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background-color: var(--surface-color);
+}
+
+.delete-btn {
+    padding: 6px;
+    background: transparent;
+    color: var(--error-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn:hover {
+    background-color: rgba(234, 67, 53, 0.1);
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+    accent-color: var(--primary-color);
+    cursor: pointer;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* 拖拽相关样式 */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: var(--hover-color);
+}
+
+.sortable-drag {
+    background-color: var(--surface-color);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#task-list li {
+    animation: fadeIn 0.3s ease;
+}
+
+/* 添加序号样式 */
+.task-number {
+    color: var(--text-secondary);
+    font-size: 14px;
+    min-width: 24px;
+    text-align: center;
+    margin-right: 8px;
+}
+
+.resizer {
+    width: 8px;
+    cursor: col-resize;
+    background-color: #f0f0f0;
+    position: relative;
+}
+
+.resizer:hover,
+.resizer.dragging {
+    background-color: #ccc;
+}
+
+.resizer::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: 30px;
+    width: 4px;
+    background-color: #999;
+    border-radius: 2px;
+}
+
+.edit-task-input {
+    width: 100%;
+    padding: 2px 4px;
+    border: 1px solid var(--primary-color);
+    border-radius: 4px;
+    font-size: inherit;
+    font-family: inherit;
+    background: transparent;
+    color: inherit;
+}
+
+.edit-task-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+.date-range {
+    width: 100%;
+}
+
+.daterangepicker-input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--text-primary);
+    background-color: var(--hover-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.daterangepicker-input:hover {
+    border-color: var(--border-color);
+    background-color: var(--surface-color);
+}
+
+/* DateRangePicker 样式覆盖 */
+.daterangepicker {
+    font-family: 'Google Sans', Arial, sans-serif;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.daterangepicker .calendar-table {
+    border-radius: 8px;
+}
+
+.daterangepicker td.active, 
+.daterangepicker td.active:hover {
+    background-color: var(--primary-color);
+}
+
+.daterangepicker .drp-buttons .btn {
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+.daterangepicker .drp-buttons .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}

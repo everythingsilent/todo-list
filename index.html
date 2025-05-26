@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任务管理与甘特图</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="./scripts/chats.js"></script>
+    <script src="./scripts/moment.min.js"></script>
+    <script src="./scripts/chartjs-adapter-moment.min.js"></script>
+    <script src="./scripts/Sortable.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧甘特图区域 -->
+        <div class="gantt-section">
+            <h2>任务时间线</h2>
+            <div id="gantt-chart-container">
+                <canvas id="gantt-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- 拖动分隔条 -->
+        <div class="resizer" id="dragMe"></div>
+
+        <!-- 右侧任务列表区域 -->
+        <div class="task-section">
+            <h1>Alex，你好</h1>
+            <div class="task-controls">
+                <input type="text" id="new-task" placeholder="添加新任务...">
+                <!-- <select class="task-filter" id="task-filter">
+                    <option value="all">全部任务</option>
+                    <option value="active">进行中</option>
+                    <option value="completed">已完成</option>
+                </select> -->
+            </div>
+            <ul id="task-list"></ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
