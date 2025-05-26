@@ -7,6 +7,23 @@ let ganttChart = null;
 let tasks = []; // 从本地存储加载任务
 let currentFilter = 'all'; // 初始化筛选状态
 
+// 注册 Chart.js Annotation 插件
+if (Chart.annotation) {
+    Chart.register(Chart.annotation);
+}
+
+// 注册拖动插件
+if (Chart.register) {
+    Chart.register({
+        id: 'dragdata',
+        beforeInit: function(chart) {
+            chart.config.options.dragData = chart.config.options.dragData || {};
+            chart.config.options.dragData.round = 1;
+            chart.config.options.dragData.showTooltip = true;
+        }
+    });
+}
+
 // 拖动分割功能
 function initResizer() {
     const resizer = document.getElementById('dragMe');
@@ -128,8 +145,10 @@ function loadTasks() {
 
 function addTask(text) {
     const now = new Date();
+    now.setHours(0, 0, 0, 0); // 设置开始时间为当天 00:00
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(23, 59, 59, 999); // 设置结束时间为次日 23:59
 
     const task = {
         id: Date.now(),
@@ -138,7 +157,8 @@ function addTask(text) {
         startDate: now,
         endDate: tomorrow
     };
-    tasks.push(task);
+    // 将新任务添加到数组开头
+    tasks.unshift(task);
     saveTasks();
     renderTasks();
     updateGanttChart();
@@ -146,7 +166,18 @@ function addTask(text) {
 
 function renderTasks() {
     taskList.innerHTML = '';
-    const filteredTasks = filterTasks(tasks);
+    
+    // 对任务进行排序：未完成的在前，已完成的在后
+    const sortedTasks = [...tasks].sort((a, b) => {
+        if (a.completed === b.completed) {
+            // 如果完成状态相同，保持原有顺序
+            return 0;
+        }
+        // 未完成的排在前面
+        return a.completed ? 1 : -1;
+    });
+    
+    const filteredTasks = filterTasks(sortedTasks);
     
     filteredTasks.forEach((task, index) => {
         const li = document.createElement('li');
@@ -265,12 +296,22 @@ function updateGanttChart() {
 
     ganttChartContainer.style.display = 'block';
 
-    // 使用当前筛选后的任务列表
-    const filteredTasks = filterTasks(tasks);
+    // 使用当前筛选后的已排序任务列表
+    const sortedTasks = [...tasks].sort((a, b) => {
+        if (a.completed === b.completed) {
+            return 0;
+        }
+        return a.completed ? 1 : -1;
+    });
+    const filteredTasks = filterTasks(sortedTasks);
+    
+    // 根据任务数量动态调整容器高度
+    const containerHeight = filteredTasks.length > 6 ? '1000px' : '500px';
+    ganttChartContainer.style.minHeight = containerHeight;
     
     // 计算合适的图表高度
     const taskCount = filteredTasks.length;
-    const heightPerTask = Math.max(50, Math.min(80, Math.floor(window.innerHeight / taskCount)));
+    const heightPerTask = Math.max(50, Math.min(80, Math.floor(parseInt(containerHeight) / taskCount)));
     const calculatedHeight = taskCount * heightPerTask;
     
     // 设置画布高度
@@ -324,7 +365,7 @@ function updateGanttChart() {
                     time: {
                         unit: 'day',
                         displayFormats: {
-                            day: 'MM-DD'
+                            day: 'ddd DD' // 添加周几的显示
                         },
                         tooltipFormat: 'YYYY-MM-DD HH:mm'
                     },
@@ -351,6 +392,22 @@ function updateGanttChart() {
                 }
             },
             plugins: {
+                annotation: {
+                    annotations: {
+                        currentDate: {
+                            type: 'line',
+                            xMin: new Date(),
+                            xMax: new Date(),
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            label: {
+                                content: '当前',
+                                enabled: true,
+                                position: 'top'
+                            }
+                        }
+                    }
+                },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
@@ -477,8 +534,14 @@ function initializeDateRangePicker(taskId) {
         // 更新任务的开始和结束时间
         const task = tasks.find(t => t.id === taskId);
         if (task) {
-            task.startDate = start.toDate();
-            task.endDate = end.toDate();
+            // 确保时间设置正确
+            const startDate = start.toDate();
+            startDate.setHours(0, 0, 0, 0);
+            const endDate = end.toDate();
+            endDate.setHours(23, 59, 59, 999);
+            
+            task.startDate = startDate;
+            task.endDate = endDate;
             saveTasks();
             updateGanttChart();
         }
